@@ -1,0 +1,104 @@
+﻿using System;
+using System.Net.Sockets;
+using System.Text;
+using System.Threading.Tasks;
+using ReactiveUI;
+using System.Reactive;
+using System.Collections.ObjectModel;
+
+namespace NecFjärr.ViewModels
+{
+    public class MainViewModel : ReactiveObject
+    {
+        private string _ipAddress = "192.168.32.24";
+        public string IpAddress
+        {
+            get => _ipAddress;
+            set => this.RaiseAndSetIfChanged(ref _ipAddress, value);
+        }
+
+        public ObservableCollection<string> Log { get; } = new();
+
+        public ReactiveCommand<string, Unit> SendSetCommand { get; }
+
+        public MainViewModel()
+        {
+            SendSetCommand = ReactiveCommand.CreateFromTask<string>(SendSetPayload);
+        }
+
+        private async Task SendSetPayload(string payload)
+        {
+            try
+            {
+                byte[] packet = BuildSetPacket(payload);
+                Log.Add($"⏩ Skickar: {BitConverter.ToString(packet).Replace("-", "")}");
+
+                using TcpClient client = new();
+                await client.ConnectAsync(IpAddress, 7142);
+                using NetworkStream stream = client.GetStream();
+
+                await stream.WriteAsync(packet, 0, packet.Length);
+
+                byte[] response = new byte[1024];
+                int bytesRead = await stream.ReadAsync(response, 0, response.Length);
+                string hexResponse = BitConverter.ToString(response, 0, bytesRead).Replace("-", "");
+
+                Log.Add($"✅ Svar: {hexResponse}");
+            }
+            catch (Exception ex)
+            {
+                Log.Add($"❌ Fel: {ex.Message}");
+            }
+        }
+
+        private byte[] BuildSetPacket(string payload)
+        {
+            byte soh = 0x01;
+            byte[] header = Encoding.ASCII.GetBytes("0A0E0A");
+            byte stx = 0x02;
+            byte[] command = Encoding.ASCII.GetBytes("0060");
+            byte[] payloadBytes = Encoding.ASCII.GetBytes(payload);
+            byte etx = 0x03;
+
+            byte[] raw = Combine(
+                new byte[] { soh },
+                header,
+                new byte[] { stx },
+                command,
+                payloadBytes,
+                new byte[] { etx }
+            );
+
+            byte bcc = CalculateBCC(raw, 1); // utan SOH
+            byte cr = 0x0D;
+
+            return Combine(raw, new byte[] { bcc, cr });
+        }
+
+        private byte CalculateBCC(byte[] data, int startIndex)
+        {
+            byte bcc = data[startIndex];
+            for (int i = startIndex + 1; i < data.Length; i++)
+                bcc ^= data[i];
+            return bcc;
+        }
+
+        private byte[] Combine(params byte[][] arrays)
+        {
+            int totalLength = 0;
+            foreach (var a in arrays)
+                totalLength += a.Length;
+
+            byte[] result = new byte[totalLength];
+            int offset = 0;
+
+            foreach (var a in arrays)
+            {
+                Buffer.BlockCopy(a, 0, result, offset, a.Length);
+                offset += a.Length;
+            }
+
+            return result;
+        }
+    }
+}

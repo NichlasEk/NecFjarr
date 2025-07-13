@@ -1,0 +1,91 @@
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="clr-namespace:NecFjärr.ViewModels"
+    x:Class="NecFjärr.Views.MainView"
+    x:DataType="vm:MainViewModel"
+    Background="#282828">
+
+  <ScrollViewer Padding="10" VerticalScrollBarVisibility="Auto">
+    <StackPanel Spacing="12">
+
+      <!-- Rubrik -->
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
+        <Image Source="avares://NecFjärr/Assets/snake_cup_icon.png"
+               Width="32" Height="32" Stretch="Uniform"/>
+        <TextBlock Text="NEC Fjärrkontroll"
+                   FontSize="24"
+                   VerticalAlignment="Center"
+                   Foreground="#fabd2f"/>
+      </StackPanel>
+
+      <!-- IP + sökknapp -->
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <TextBlock Text="IP:" Foreground="#ebdbb2" VerticalAlignment="Center"/>
+        <TextBox Text="{Binding IpAddress}"
+                 Width="200"
+                 Height="32"
+                 Watermark="192.168.x.x"
+                 Background="#3c3836"
+                 Foreground="#ebdbb2"
+                 BorderBrush="#d79921"/>
+        <Button Content="🔍"
+                Width="32" Height="32"
+                Background="#b8bb26"
+                Foreground="#282828"
+                ToolTip.Tip="Sök efter NEC-TV"
+                Command="{Binding ScanForNecTvCommand}"/>
+      </StackPanel>
+
+      <!-- Power -->
+      <TextBlock Text="Ström:" Foreground="#fbf1c7"/>
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <Button Content="🟢 På"
+                Height="32" Width="90"
+                Background="#98971a" Foreground="#282828"
+                Command="{Binding SendPowerOnCommand}"/>
+        <Button Content="🔴 Av"
+                Height="32" Width="90"
+                Background="#cc241d" Foreground="#fbf1c7"
+                Command="{Binding SendPowerOffCommand}"/>
+      </StackPanel>
+
+      <!-- Ingångar -->
+      <TextBlock Text="Ingång:" Foreground="#fbf1c7" Margin="0,10,0,0"/>
+
+      <StackPanel Orientation="Vertical" Spacing="6">
+        <StackPanel Orientation="Horizontal" Spacing="10">
+          <Button Content="HDMI1" Width="100"
+                  Background="#fabd2f" Foreground="#282828"
+                  Command="{Binding SendSetCommand}" CommandParameter="0011"/>
+          <Button Content="HDMI2" Width="100"
+                  Background="#fe8019" Foreground="#282828"
+                  Command="{Binding SendSetCommand}" CommandParameter="0012"/>
+          <Button Content="HDMI3" Width="100"
+                  Background="#d79921" Foreground="#282828"
+                  Command="{Binding SendSetCommand}" CommandParameter="0082"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Spacing="10">
+          <Button Content="VGA-RGB" Width="100"
+                  Background="#83a598" Foreground="#282828"
+                  Command="{Binding SendSetCommand}" CommandParameter="0001"/>
+          <Button Content="VGA-COMP" Width="100"
+                  Background="#8ec07c" Foreground="#282828"
+                  Command="{Binding SendSetCommand}" CommandParameter="000C"/>
+          <Button Content="A/V-IN" Width="100"
+                  Background="#b8bb26" Foreground="#282828"
+                  Command="{Binding SendSetCommand}" CommandParameter="0005"/>
+        </StackPanel>
+      </StackPanel>
+
+      <!-- Logg -->
+      <TextBlock Text="Logg:" Foreground="#a89984"/>
+      <ListBox ItemsSource="{Binding Log}"
+               Height="120"
+               Background="#1d2021"
+               Foreground="#ebdbb2"
+               BorderBrush="#504945"/>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>
