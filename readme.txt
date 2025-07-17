@@ -8,9 +8,8 @@ If you would like to try this for android, i guess you could try my emu.sh if yo
 a release. Happy remoting!
 
 
-inputväxling
+commands:
 
-Skickat från min Galaxy
 poweon
 
 echo '01304130413043024332303344363030303103730D' | xxd -r -p | nc 192.168.32.24 7142
@@ -19,15 +18,15 @@ poweroff
 
 echo '01304130413043024332303344363030303403760D' | xxd -r -p | nc 192.168.32.24 7142
 
-vga
+vga RGBHV
 
 echo '0130413045304102303036303030303103730D' | xxd -r -p | nc 192.168.32.24 7142
 
-vga fast component
+vga Component
 
 echo '0130413045304102303036303030304303010D' | xxd -r -p | nc 192.168.32.24 7142
 
-byta till av:
+A/V Input
 
 ~ $ mono NecSetPayload.exe 0005
 Skickar (HEX): 0130413045304102303036303030303503770D
