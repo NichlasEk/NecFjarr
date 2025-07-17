@@ -1,4 +1,8 @@
-
+This is a little remote-app for the NEC E558 screens (and alike models). It can be compiled for android and is used to send raw HEX commands to a selected TCP/IP.
+You can try to find your NEC screen with the search IP function. This is only tested on my screen and might not work as intended.
+The function for switching input however might be useful for someone else. The payload is modifiably, so you can try other commands in code if my commands dosent work.
+The Power on and Power off commands are hardcoded raw hex i found on the internet. I have not been avle to create a function with changable payload to try other commands with
+the same format. The app is coded in C# with Avalonia UI. 
 
 
 inputväxling
