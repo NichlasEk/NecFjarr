@@ -4,6 +4,9 @@ The function for switching input however might be useful for someone else. The p
 The Power on and Power off commands are hardcoded raw hex i found on the internet. I have not been avle to create a function with changable payload to try other commands with
 the same format. The app is coded in C# with Avalonia UI. 
 
+If you would like to try this for android, i guess you could try my emu.sh if you have an emulator installed and or just my release.sh for compiling and compressing then running
+a release. Happy remoting!
+
 
 inputväxling
 
