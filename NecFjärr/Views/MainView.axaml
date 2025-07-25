@@ -79,6 +79,20 @@
         </StackPanel>
       </StackPanel>
 
+      <!-- Ny knapp och textruta -->
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <TextBox Name="CommandTextBox"
+                 Width="100"
+                 Watermark="Enter Command"
+                 Background="#3c3836"
+                 Foreground="#ebdbb2"
+                 BorderBrush="#d3869b"/>
+        <Button Content="Send Command" Width="100"
+                Background="#d3869b" Foreground="#282828"
+                Command="{Binding SendSetCommand}"
+                CommandParameter="{Binding Text, ElementName=CommandTextBox}" />
+      </StackPanel>
+
       <!-- Logg -->
       <TextBlock Text="Logg:" Foreground="#a89984"/>
       <ListBox ItemsSource="{Binding Log}"
@@ -86,6 +100,7 @@
                Background="#1d2021"
                Foreground="#ebdbb2"
                BorderBrush="#504945"/>
+
     </StackPanel>
   </ScrollViewer>
 </UserControl>
