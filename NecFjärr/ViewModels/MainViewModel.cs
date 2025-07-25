@@ -15,7 +15,10 @@ namespace NecFjärr.ViewModels
 {
     public class MainViewModel : ReactiveObject
     {
-        private string _ipAddress = "192.168.32.24";
+        private static readonly string IpSavePath =
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "nec_last_ip.txt");
+
+        private string _ipAddress = "192.168.32.1";
         public string IpAddress
         {
             get => _ipAddress;
@@ -31,6 +34,22 @@ namespace NecFjärr.ViewModels
 
         public MainViewModel()
         {
+            // Läs in senast sparade IP-adress vid uppstart
+            if (File.Exists(IpSavePath))
+            {
+                try
+                {
+                    string savedIp = File.ReadAllText(IpSavePath).Trim();
+                    if (!string.IsNullOrWhiteSpace(savedIp))
+                        IpAddress = savedIp;
+                }
+                catch (Exception ex)
+                {
+                    Log.Add($"⚠️ Kunde inte läsa sparad IP: {ex.Message}");
+                }
+            }
+
+            // Skapa kommandon
             SendSetCommand = ReactiveCommand.CreateFromTask<string>(SendSetPayload);
             SendPowerOnCommand = ReactiveCommand.CreateFromTask(() =>
             SendRawHex("01304130413043024332303344363030303103730D"));
@@ -210,6 +229,16 @@ namespace NecFjärr.ViewModels
                         {
                             IpAddress = targetIp;
                             AddLog($"✅ Hittade NEC-TV på: {targetIp}");
+
+                            try
+                            {
+                                File.WriteAllText(IpSavePath, targetIp);
+                            }
+                            catch (Exception ex)
+                            {
+                                AddLog($"⚠️ Kunde inte spara IP: {ex.Message}");
+                            }
+
                             return;
                         }
                     }
